@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="JS/jquery-3.3.1.js"></script>
+    <script src="JS/bootstrap.min.js"></script>
+    <link href="CSS/bootstrap.css" rel="stylesheet" />
+    <link href="CSS/Site.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <title></title>
+
+</head>
+<body>
+
+    <!--Card Inicio Sesion-->
+    <div class="card" style="width:30%;margin-left:33%;margin-top:200px">
+        <ul class="list-group list-group-flush">
+            <li id="LiInicioSesion" onmouseover="cambiarColorover('LiInicioSesion');" onmouseout="cambiarColorout('LiInicioSesion');" class="list-group-item" style="min-height:250px;border-radius:35px;border-width:4px">
+                <h5 class="card-title" style="font-size:xx-large;margin-left:18%;margin-top:25px">Gestión de Tareas</h5>
+
+                <a href="#" class="btn btn-primary" style="margin-top:50px;margin-left:33%" onclick="login();">
+                    <span class="glyphicon glyphicon-log-in"></span> Iniciar Sesión
+                </a>
+            </li>
+
+        </ul>
+    </div>
+    <!--end Card Inicio Sesion-->
+
+
+
+
+    <script src="JS/oidc-client.js"></script>
+    <script src="JS/appgulp/appgulp.js"></script>
+</body>
+</html>

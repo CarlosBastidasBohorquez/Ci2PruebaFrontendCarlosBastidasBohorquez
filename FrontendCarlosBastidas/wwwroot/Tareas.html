@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="JS/jquery-3.3.1.js"></script>
+    <script src="JS/bootstrap.min.js"></script>
+    <link href="CSS/bootstrap.css" rel="stylesheet" />
+    <link href="CSS/Site.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+
+    <label style="margin-left:35%;font-size:20px;margin-top:-10px"> <span class="glyphicon glyphicon-user"></span> <span id="NameUser"></span></label>
+
+    <!--Menu principal-->
+    <div class="panel panel-default" id="Panel" onmouseout="cambiarColorout('Panel');" onmouseover="cambiarColorover('Panel');" style="width:78%;margin-left:11%">
+        <div class="panel-body">
+            <div class="btn-toolbar">
+                <button id="btnNuevaTarea" onclick="LimpiarBorC()" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#MdAgregarTarea">
+                    <span class="glyphicon glyphicon-plus"></span> Nueva tarea
+                </button>
+
+                <div class="form-group" style="margin-left:10%">
+                    <div class="col-sm-2">
+                        <input id="filtroTareTodas" type="radio" onclick="Filtro();" value="true" name="FiltroRadio">
+                        <span type="text" class="form-control-sm">Todas</span>
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="filtroTareFinalizadas" type="radio" onclick="Filtro();" value="false" name="FiltroRadio">
+                        <span type="text" class="form-control-sm">Finalizadas</span>
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="filtroTarePendientes" type="radio" onclick="Filtro();" value="false" name="FiltroRadio">
+                        <span type="text" class="form-control-sm">Pendientes</span>
+                    </div>
+                    <div class="col-md-2">
+                        <input id="textoTareDescripcion" style="width:100%" type="text" class="form-control" placeholder="descripción">
+                    </div>
+                    <div class="col-sm-2">
+                        <button id="buscarTareas" class="btn btn-sm" style="background-color:lightsteelblue;border-color:lightsteelblue" onclick="Filtro();" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> buscar</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="cerrarSesion" onclick="logout();" type="button" class="btn btn-sm btn-primary" style="background-color:darkslategray;border-color:darkslategray">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Cerrar sesión
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--end Menu principal-->
+    <!--Alertas Notificacion-->
+    <div id="AlertaExtio" class="alert alert-success" role="alert" style="display:none;width:50%;margin-left:25%">
+        <strong>Exito!</strong> <label id="lblAlerta"></label>
+        <button type="button" class="close" onclick="CerrarAlerta(1);">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div id="AlertaAdver" class="alert alert-warning" role="alert" style="display:none;width:50%;margin-left:25%">
+        <strong>Nota!</strong> <label id="lblAlertaAdver"></label>
+        <button type="button" class="close" onclick="CerrarAlerta(2);">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!--end Alertas Notificacion-->
+
+    <!--Lista de tareas registradas-->
+    <div class="card" style="width:50%;margin:25%;margin-top:3%;">
+        <ul class="list-group list-group-flush" id="ListaTareas" style="overflow-y:auto;max-height:600px"></ul>
+    </div>
+    <!--end Lista de tareas registradas-->
+
+    <!-- Modal para agregar una tarea -->
+    <div class="modal fade" id="MdAgregarTarea" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Nueva Tarea</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="descripCrear" onchange="ValidarVa();" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de vencimiento</label>
+                            <input id="fechaVencCrear" onchange="ValidarVa();" class="form-control" type="date">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" style="margin-left:-10%" onclick="CrearTarea();" class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Guardar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--end Modal para agregar una tarea -->
+
+    <!--Modal para Actualizar una tarea-->
+    <div class="modal fade" id="MdActualizarTarea" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Actualizar Tarea</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="lblid" style="display:none"></label>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="descAct" class="form-control" onchange="ValidarAc();"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de vencimiento</label>
+                            <input id="fechaVencAct" class="form-control" type="date" onchange="ValidarAc();">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <input id="InpPendiente" type="radio" value="0" name="FiltroRadioU">
+                                <span type="text" class="form-control-sm" style="border:0">Pendiente</span>
+                            </div>
+                            <div class="col-md-3">
+                                <input id="InpFinalizada" type="radio" onclick="Filtro(1);" value="true" name="FiltroRadioU">
+                                <span type="text" class="form-control-sm" style="border:0">Finalizada</span>
+                            </div>
+                        </div>
+                        <br />
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" style="margin-left:-10%" onclick="ActualizarTarea();" class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Actualizar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--end Modal para actualizar una tarea-->
+
+    <!--Modal para eliminar tarea-->
+    <div class="modal fade" id="MdEliminarTarea" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content" style="background-color:bisque">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Borrar Tarea</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <label id="lblidElimi" style="display:none"></label>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="descElimi" class="form-control" disabled></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de vencimiento</label>
+                            <input id="fechaVencElimi" class="form-control" type="date" disabled />
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <input id="InpPendienteElimi" type="radio" value="0" name="FiltroRadioE" disabled>
+                                <span type="text" class="form-control-sm" style="border:0">Pendiente</span>
+                            </div>
+                            <div class="col-md-3">
+                                <input id="InpFinalizadaElimi" type="radio" onclick="Filtro(1);" value="true" name="FiltroRadioE" disabled>
+                                <span type="text" class="form-control-sm" style="border:0">Finalizada</span>
+                            </div>
+                        </div>
+                        <br />
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" style="margin-left:-10%" onclick="EliminarTarea();" class="btn btn-primary"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Eliminar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cerrar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--end Modal para eliminar tarea-->
+
+
+
+    <script src="JS/oidc-client.js"></script>
+    <script src="JS/appgulp/appgulpT.js"></script>
+</body>
+</html>
